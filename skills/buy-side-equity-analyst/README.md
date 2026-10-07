@@ -1,19 +1,12 @@
 # Buy-side equity analyst
 
-A Claude skill that runs fundamental equity research on a public company the way a buy-side analyst would, and ends with a capital allocation call rather than a description of the business.
+An AI skill that runs fundamental equity research on a public company the way a buy-side analyst would, and ends with a capital allocation call rather than a description of the business.
 
 It works through business model, moat, financial quality, management, valuation, risks and catalysts, then forces three things most write-ups skip: the strongest bear case, what the market already believes, and where that consensus might be wrong. Output is a fixed template ending in a probability-weighted view, a confidence score out of ten, and a position suitability call.
 
 ## Install
 
-Copy the skill into your skills directory:
-
-```bash
-git clone https://github.com/Vidwaansinghania/Claude-Skills.git
-cp -r Claude-Skills/skills/buy-side-equity-analyst ~/.claude/skills/
-```
-
-Claude Code picks it up on the next session. For Claude Desktop, add the folder through the skills interface.
+See [Install](../../README.md#install) in the main README. It works in any agent that reads skills folders. In a chat assistant without skills, paste this folder's `SKILL.md` (below the `---` header) into custom instructions or the first message.
 
 ## Using it
 

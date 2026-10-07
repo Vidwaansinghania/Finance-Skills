@@ -1,17 +1,12 @@
 # Chief risk officer
 
-A Claude skill that reviews an investment thesis with the goal of breaking it. Its mandate is preventing permanent capital loss, not improving returns, so it is adversarial by design and never argues the bull side.
+An AI skill that reviews an investment thesis with the goal of breaking it. Its mandate is preventing permanent capital loss, not improving returns, so it is adversarial by design and never argues the bull side.
 
 It starts from the assumption that the thesis is wrong and works to prove it: restating the assumptions being made, listing the ways they fail, modelling worst realistic outcomes, and hunting for risks that are non-linear, second-order or regime-dependent rather than the ones already in the disclosure. It closes with a drawdown estimate and one of four ratings, up to Unacceptable Risk.
 
 ## Install
 
-```bash
-git clone https://github.com/Vidwaansinghania/Claude-Skills.git
-cp -r Claude-Skills/skills/chief-risk-officer ~/.claude/skills/
-```
-
-Claude Code picks it up on the next session. For Claude Desktop, add the folder through the skills interface.
+See [Install](../../README.md#install) in the main README. It works in any agent that reads skills folders. In a chat assistant without skills, paste this folder's `SKILL.md` (below the `---` header) into custom instructions or the first message.
 
 ## Using it
 

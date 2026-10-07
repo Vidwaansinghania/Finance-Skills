@@ -1,17 +1,12 @@
 # Macro analyst
 
-A Claude skill that classifies the current economic regime and translates it into portfolio positioning. It does not pick stocks.
+An AI skill that classifies the current economic regime and translates it into portfolio positioning. It does not pick stocks.
 
 The premise is that markets are regime-driven rather than narrative-driven, and that the same asset behaves differently depending on which regime you are in. So the skill sorts the environment into one of six states, from expansion through stagflation, reads the rate, inflation, growth, liquidity, credit and policy variables behind that call, and then works forward to sector leadership, growth versus value, small versus large cap, and what the portfolio is quietly exposed to. Scenarios get explicit probabilities rather than adjectives.
 
 ## Install
 
-```bash
-git clone https://github.com/Vidwaansinghania/Claude-Skills.git
-cp -r Claude-Skills/skills/macro-analyst ~/.claude/skills/
-```
-
-Claude Code picks it up on the next session. For Claude Desktop, add the folder through the skills interface.
+See [Install](../../README.md#install) in the main README. It works in any agent that reads skills folders. In a chat assistant without skills, paste this folder's `SKILL.md` (below the `---` header) into custom instructions or the first message.
 
 ## Using it
 
@@ -19,7 +14,7 @@ Claude Code picks it up on the next session. For Claude Desktop, add the folder 
 What regime are we in, and what does it mean for a portfolio tilted toward consumer discretionary?
 ```
 
-Give it current rate and inflation data. Claude's training cutoff means it will otherwise reason from stale numbers, which is the one failure mode this skill cannot catch on its own.
+Give it current rate and inflation data. A model's training data has a cutoff, so without fresh figures it reasons from stale numbers, which is the one failure mode this skill cannot catch on its own.
 
 ## What it returns
 

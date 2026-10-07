@@ -1,58 +1,70 @@
-# Claude skills
+# Finance skills
 
-Skills I have written for Claude, kept in one repo so they can be installed together or picked apart.
+Four AI skills that split an investment committee into separate roles: an analyst who builds the case, a risk officer who attacks it, a macro analyst who sets the regime, and a portfolio manager who decides how much capital it gets.
 
-Each one lives in its own folder under `skills/` with a `SKILL.md` holding the prompt and a `README.md` explaining what it does and how it behaves.
+They work with any capable AI model. Each skill is a plain Markdown prompt (`SKILL.md`) in the open Agent Skills format, so nothing in them is tied to one vendor.
 
-## Catalog
+## What they do
 
-Every skill in this repo. The trigger column is the `description` field from each `SKILL.md` frontmatter, which is what Claude reads when deciding whether to load the skill.
-
-| Skill | What it does | Trigger description | Status | Source of truth |
-|---|---|---|---|---|
-| [buy-side-equity-analyst](skills/buy-side-equity-analyst) | Builds the case: fundamental research on one company, ending in a probability-weighted view and a position suitability call | Institutional-quality equity research for public companies, including business quality, valuation, moat, risks, catalysts, and investment recommendations. | Live | This repo, `skills/buy-side-equity-analyst` |
-| [chief-risk-officer](skills/chief-risk-officer) | Attacks the case: assumes the thesis is wrong, models failure scenarios and drawdown, rates the risk | Institutional portfolio risk manager focused on preventing permanent capital loss and challenging investment assumptions. | Live | This repo, `skills/chief-risk-officer` |
-| [macro-analyst](skills/macro-analyst) | Sets the regime: classifies the macro environment and translates it into sector and factor positioning | Institutional macroeconomic analyst focused on economic regimes, interest rates, inflation, liquidity conditions, and market implications for portfolio positioning. | Live | This repo, `skills/macro-analyst` |
-| [portfolio-manager](skills/portfolio-manager) | Sizes the position: turns the other three outputs and your holdings into a position size and verdict | Institutional portfolio manager responsible for capital allocation, position sizing, portfolio construction, and risk-adjusted returns. | Live | This repo, `skills/portfolio-manager` |
-| [lecture-notes-builder](skills/lecture-notes-builder) | Merges a lecture transcript and the slides into one exam-ready note, filed in the right Obsidian course folder | Turns a lecture transcript (Granola or similar) plus the lecture slides into a structured, exam-ready class note filed in the right Obsidian course folder. Use when the user shares a class transcript, lecture slides, or asks to write up a lecture or class. | Live | This repo, `skills/lecture-notes-builder` |
-| [pdf-to-profile-note](skills/pdf-to-profile-note) | Turns a personality report, assessment or study guide PDF into a short, page-cited Profile note, flagging conflicts with what is already there | Ingests a PDF (personality or psychometric report, assessment results, study guide, career report) into a structured, cited Obsidian Profile note, and merges it with what the Profile already says. Use when the user shares a PDF about themselves or a study guide and wants it added to their vault or Profile. | Live | This repo, `skills/pdf-to-profile-note` |
-| [project-readme-publisher](skills/project-readme-publisher) | Turns a project's Obsidian notes into tab-style GitHub docs and publishes them on a branch through a pull request | Writes tab-style GitHub README documentation for a project kept in an Obsidian vault (or any folder) and publishes it to a GitHub repository on a branch with a pull request. Use when the user wants a project documented on GitHub, a README written or refreshed, or vault project notes pushed to a repo. | Live | This repo, `skills/project-readme-publisher` |
-| [timetable-to-ics](skills/timetable-to-ics) | Converts a timetable into an .ics file with a bundled script that re-reads the output and checks every event against the source | Converts a class or exam timetable (PDF, screenshot, spreadsheet or pasted text) into an .ics calendar file with strict, scripted accuracy checks against the source. Use when the user wants a timetable, schedule or term dates turned into a calendar or .ics file. | Live | This repo, `skills/timetable-to-ics` (includes `scripts/build_ics.py`) |
-| [vault-health-check](skills/vault-health-check) | Audits an Obsidian vault with a read-only script, applies the unambiguous fixes and asks before anything destructive | Audits an Obsidian vault for orphan notes, broken links, duplicate names, unused attachments and stale index notes, then proposes and applies fixes. Use when the user asks to clean up, audit, tidy or check their vault, find orphans or broken links, or update index notes. | Live | This repo, `skills/vault-health-check` (includes `scripts/audit_vault.py`) |
-
-## The investment committee set
-
-The four finance skills above split an investment committee across separate roles, so each argument gets made properly instead of one voice hedging against itself.
-
-| Skill | Role | Runs |
+| Skill | Role | What it returns |
 |---|---|---|
-| [buy-side-equity-analyst](skills/buy-side-equity-analyst) | Builds the case | First, or after the macro read |
-| [chief-risk-officer](skills/chief-risk-officer) | Attacks it | After the analyst |
-| [macro-analyst](skills/macro-analyst) | Sets the regime | Independently of any single name |
-| [portfolio-manager](skills/portfolio-manager) | Sizes the position | Last, on the other three outputs |
+| [buy-side-equity-analyst](skills/buy-side-equity-analyst) | Builds the case | Fundamental research on one company: business, moat, financial quality, management, valuation, bear case, catalysts, bull/base/bear scenarios, a confidence score and a position suitability call |
+| [chief-risk-officer](skills/chief-risk-officer) | Attacks it | Assumes the thesis is wrong: the assumptions underneath it, three failure scenarios, a worst case with drawdown, hidden and portfolio-level risks, a risk rating and an approve-to-reject action |
+| [macro-analyst](skills/macro-analyst) | Sets the regime | Classifies the economy into one of six regimes, reads rates, inflation, growth, liquidity, credit and policy, and turns that into sector and factor positioning with scenario probabilities |
+| [portfolio-manager](skills/portfolio-manager) | Sizes the position | Takes the other three outputs and your holdings and returns a position size, its effect on portfolio risk and correlation, the opportunity cost, and a verdict from add to exit |
 
-The order matters. The analyst produces a thesis, the risk officer tries to break it, and the portfolio manager decides whether it gets capital and how much. The macro analyst sets context and does not pick stocks.
+## How they work together
+
+One model arguing both sides of a trade tends to hedge. Giving each argument its own prompt makes each one get made properly.
+
+| Order | Skill | Input |
+|---|---|---|
+| Any time | macro-analyst | Current rate, inflation and growth data. It doesn't pick stocks. |
+| 1 | buy-side-equity-analyst | A company name, plus filings or financials if you have them |
+| 2 | chief-risk-officer | The analyst's write-up |
+| 3 | portfolio-manager | All of the above and your current holdings |
+
+Each skill also works alone. The risk officer is most useful on ideas you already like.
+
+## Requirements
+
+| Need | Why |
+|---|---|
+| A capable AI model | The skills are prompts; there is no code |
+| Current data: a model with web search, or filings, prices and macro figures you paste in | A model's training data has a cutoff. Without fresh numbers it reasons from stale ones, which the skills can't catch on their own. |
+| Your holdings, for the portfolio manager | Its correlation and concentration checks need something to work against |
+
+No API keys and no packages to install.
 
 ## Install
 
-Clone the repo and copy the skills you want into your skills directory:
+| Where you run it | How |
+|---|---|
+| An agent that reads skills folders (Claude Code, OpenAI Codex, Gemini CLI, GitHub Copilot, Cursor and the others listed at [agentskills.io](https://agentskills.io)) | Clone the repo and copy the skill folders into the agent's skills folder. Each agent documents its own location. |
+| A chat assistant without skills (ChatGPT, Gemini, Claude.ai, a local model) | Paste a skill's `SKILL.md` (below the `---` header) into custom instructions, a project, a Gem, or the first message. One conversation or project per role keeps the roles apart. |
+
+With Claude Code as the example agent:
 
 ```bash
-git clone https://github.com/Vidwaansinghania/Claude-Skills.git
-cp -r Claude-Skills/skills/* ~/.claude/skills/
+git clone https://github.com/Vidwaansinghania/Finance-Skills.git
+cp -r Finance-Skills/skills/* ~/.claude/skills/
 ```
 
-For a single skill, copy just that folder:
+Swap `~/.claude/skills/` for your agent's skills folder. To take one skill only, copy just that folder.
 
-```bash
-cp -r Claude-Skills/skills/macro-analyst ~/.claude/skills/
-```
+## Other AI skills
 
-Claude Code picks them up on the next session. For Claude Desktop, add the folders through the skills interface.
+Each of these has its own repo:
 
-## Related
+| Repo | What it does |
+|---|---|
+| [Lecture-Notes-Builder](https://github.com/Vidwaansinghania/Lecture-Notes-Builder) | Merges a lecture transcript and slides into one exam-ready Obsidian note |
+| [Timetable-to-ICS](https://github.com/Vidwaansinghania/Timetable-to-ICS) | Turns a timetable into an .ics file and checks every event against the source |
+| [Vault-Health-Check](https://github.com/Vidwaansinghania/Vault-Health-Check) | Audits an Obsidian vault for orphans and broken links and fixes the safe ones |
+| [PDF-to-Profile-Note](https://github.com/Vidwaansinghania/PDF-to-Profile-Note) | Turns a personality report or study guide PDF into a page-cited Profile note |
+| [Project-README-Publisher](https://github.com/Vidwaansinghania/Project-README-Publisher) | Writes tab-style GitHub docs from project notes and opens a pull request |
 
-The multi-agent equity research pipeline is a larger project and lives in its own repo: [Multi-Agent-Equity-Research](https://github.com/Vidwaansinghania/Multi-Agent-Equity-Research).
+The multi-agent equity research pipeline is a larger project with its own repo: [Multi-Agent-Equity-Research](https://github.com/Vidwaansinghania/Multi-Agent-Equity-Research).
 
 ## Licence
 
